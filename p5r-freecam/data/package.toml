@@ -1,0 +1,84 @@
+Id = "persona5royal.mod.freecam.riri"
+Reloaded2Id = "p5rpc.freecam"
+LoggerPrefix = "P5R Freecam"
+Name = "P5R Freecam"
+Author = "Rirurin"
+PackageType = "Mod"
+DocsFile = "index.html"
+Tags = [ "camera" ]
+IsDependency = false
+ClientSide = false
+
+Icon = "icon.jxl"
+Reloaded2Icon = "Icon.png"
+SupportedGames = [ "persona5royal", "p5r.exe" ]
+
+[CargoImport]
+Summary = true
+Version = true
+SourceUrl = true
+ProjectUrl = true
+
+[[Credits]]
+Name = "Rirurin"
+Role = "Main Developer"
+Url = "https://riri.wtf"
+
+[UpdateSourceData]
+[UpdateSourceData.Gamebanana]
+ItemType = "Mod"
+ItemId = 559400
+
+[UpdateSourceData.Github]
+UserName = "Rirurin"
+RepositoryName = "p5r-freecam"
+
+[[R2Dependencies]]
+Id = "p5rpc.modloader"
+[R2Dependencies.UpdateSourceData]
+[R2Dependencies.UpdateSourceData.Github]
+UserName = "Sewer56"
+RepositoryName = "p5rpc.modloader"
+
+[[R2Dependencies]]
+Id = "reloaded.sharedlib.hooks"
+[R2Dependencies.UpdateSourceData]
+ReleaseMetadataFileName = "Sewer56.Update.ReleaseMetadata.json"
+AssetFileName = "reloaded.sharedlib.hooks.zip"
+[R2Dependencies.UpdateSourceData.Github]
+UserName = "Sewer56"
+RepositoryName = "Reloaded.SharedLib.Hooks.ReloadedII"
+
+[[R2Dependencies]]
+Id = "Reloaded.Memory.SigScan.ReloadedII"
+[R2Dependencies.UpdateSourceData]
+ReleaseMetadataFileName = "Reloaded.Memory.SigScan.ReloadedII.ReleaseMetadata.json"
+[R2Dependencies.UpdateSourceData.Github]
+UserName = "Reloaded-Project"
+RepositoryName = "Reloaded.Memory.SigScan"
+
+[[R2Dependencies]]
+Id = "SharedScans.Reloaded"
+HasInterface = true
+[R2Dependencies.UpdateSourceData]
+[R2Dependencies.UpdateSourceData.Github]
+UserName = "RyoTune"
+RepositoryName = "SharedScans"
+
+[[R2Dependencies]]
+Id = "Ryo.Reloaded"
+HasInterface = true
+[R2Dependencies.UpdateSourceData]
+[R2Dependencies.UpdateSourceData.Github]
+UserName = "RyoTune"
+RepositoryName = "Ryo"
+
+[[R2Dependencies]]
+Id = "p5rpc.opengfd"
+
+[[R2Dependencies]]
+Id = "riri.modruntime"
+
+[HookSettings]
+HookLibrary = "Reloaded2CSharpHooks"
+DefaultCallingConvention = "Microsoft"

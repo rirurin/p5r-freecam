@@ -1,0 +1,25 @@
+
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36408.4 d17.14
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "p5rpc.freecam", "p5rpc.freecam.csproj", "{8DE636AC-BA50-4238-9B23-84C60F3EE474}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{8DE636AC-BA50-4238-9B23-84C60F3EE474}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8DE636AC-BA50-4238-9B23-84C60F3EE474}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8DE636AC-BA50-4238-9B23-84C60F3EE474}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8DE636AC-BA50-4238-9B23-84C60F3EE474}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {C259770E-3F0F-4389-804F-0B6452825E9E}
+	EndGlobalSection
+EndGlobal

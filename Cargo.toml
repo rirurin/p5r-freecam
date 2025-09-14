@@ -1,0 +1,44 @@
+[workspace]
+
+members = [
+    "p5r-freecam",
+    "xrd744-lib"
+]
+resolver = "2"
+
+[workspace.package]
+version = "0.1.0"
+authors = [ "Rirurin" ]
+categories = [ "games" ]
+homepage = "https://riri.wtf"
+repository = "https://github.com/rirurin/p5r-freecam"
+license-file = "LICENSE"
+edition = "2021"
+
+# Optimized Release Build, all the optimizations!!
+[profile.release]
+codegen-units = 1
+lto = true
+strip = true  # Automatically strip symbols from the binary.
+
+# Release Build with Debug Info
+[profile.release-debug]
+inherits = "release"
+debug = true # Allow us to debug using LLDB
+
+# Slow Debug, for fast iteration
+[profile.slow-debug]
+inherits = "release"
+debug = true
+lto = "thin"
+# lto = false
+incremental = true
+codegen-units = 64
+
+[patch."https://github.com/rirurin/opengfd"]
+opengfd = { path = "../opengfd/opengfd" }
+
+[patch."https://github.com/rirurin/riri-mod-tools"]
+riri-mod-tools-proc = { path = "../riri-mod-tools/riri-mod-tools-proc" }
+riri-mod-tools-rt = { path = "../riri-mod-tools/riri-mod-tools-rt" }
+riri-mod-tools = { path = "../riri-mod-tools/riri-mod-tools" }
