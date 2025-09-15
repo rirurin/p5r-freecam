@@ -92,8 +92,8 @@ where A: Allocator + Clone {
     target_pos_history: Vec3A,
     target_pos_real: Vec3A,
     target_move: Vec3A,
-    fieldc0: Vec3A,
-    fieldd0: Vec3A,
+    eye_pos: Vec3A,
+    lookat_pos: Vec3A,
     fielde0: Vec3A,
     fieldf0: Vec3A,
     field100: Vec3A,
@@ -125,6 +125,8 @@ where A: Allocator + Clone {
     blur_fall_off_default: f32,
     pitch: f32,
     yaw: f32,
+    field18c: f32,
+    pitch_rad: f32,
     pitch_mark: f32,
     pitch_min: f32,
     pitch_max: f32,
@@ -173,7 +175,7 @@ where A: Allocator + Clone {
     rotate_y_speed: f32,
     rotate_y_on_time: f32,
     rotate_y_off_time: f32,
-    field24c: [u8; 0x1c],
+    field254: [u8; 0x14],
     lock_ref_count: u32,
     input_lock_ref_count: u32,
     lock_view: Mat4,
@@ -221,12 +223,21 @@ where A: Allocator + Clone {
         self.target_node.map(|mut v| unsafe { v.as_mut() })
     }
     pub fn get_pitch(&self) -> f32 {
-        self.pitch
+        self.pitch_rad
     }
     pub fn get_yaw(&self) -> f32 {
         self.yaw
     }
     pub fn get_target_offset(&self) -> Vec3A {
         self.target_offset
+    }
+    pub fn get_target_pos(&self) -> Vec3A {
+        self.target_pos
+    }
+    pub fn get_lookat_pos(&self) -> Vec3A {
+        self.lookat_pos
+    }
+    pub fn get_eye_pos(&self) -> Vec3A {
+        self.eye_pos
     }
 }

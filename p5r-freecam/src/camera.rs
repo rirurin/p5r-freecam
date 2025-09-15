@@ -1,7 +1,6 @@
 use opengfd::{
     kernel::{
         allocator::GfdAllocator,
-        global::Global,
         task::{
             InitTask,
             Task as GfdTask,
@@ -19,10 +18,11 @@ use std::{
 };
 use std::ops::{Add, Mul};
 use bitflags::bitflags;
-use glam::{EulerRot, Vec3A, Quat, Mat4, Vec4};
+use glam::{ EulerRot, Vec3A, Quat, Mat4 };
 use opengfd::io::controller::ControllerButton;
 use windows::Win32::UI::Input::KeyboardAndMouse::{
     GetAsyncKeyState,
+    GetFocus,
     VK_F4,
     VK_ADD,
     VK_SUBTRACT,
@@ -39,7 +39,8 @@ use windows::Win32::UI::Input::KeyboardAndMouse::{
     VK_NUMPAD1,
     VK_NUMPAD2,
     VK_BACK,
-    VK_DELETE
+    VK_DELETE,
+    VIRTUAL_KEY
 };
 use xrd744_lib::fld::camera::Camera as FldCamera;
 
@@ -95,6 +96,7 @@ bitflags! {
         const HOOKED_MISSION_DRAW = 1 << 0x12;
         const HOOKED_BATTLE_PARTY_PANEL = 1 << 0x13;
         const HOOKED_ROADMAP = 1 << 0x14;
+        const HOOKED_CASINO_COIN = 1 << 0x15;
     }
 }
 
@@ -349,18 +351,15 @@ impl Freecam {
     }
 
     pub fn update_scene_speed(&mut self) {
-        if unsafe { GetAsyncKeyState(VK_OEM_MINUS.0 as i32) & 1 != 0
-            || GetAsyncKeyState(VK_SUBTRACT.0 as i32) & 1 != 0 } {
+        if Self::check_key_pressed(VK_OEM_MINUS) || Self::check_key_pressed(VK_SUBTRACT) {
             self.change_frequency_speed(true);
-        } else if unsafe { GetAsyncKeyState(VK_OEM_PLUS.0 as i32) & 1 != 0
-            || GetAsyncKeyState(VK_ADD.0 as i32) & 1 != 0 } {
+        } else if Self::check_key_pressed(VK_OEM_PLUS) || Self::check_key_pressed(VK_ADD) {
             self.change_frequency_speed(false);
         }
     }
 
     pub fn lock_camera_position(&mut self) {
-        if unsafe { GetAsyncKeyState(VK_0.0 as i32) & 1 != 0
-            || GetAsyncKeyState(VK_NUMPAD0.0 as i32) & 1 != 0 } {
+        if Self::check_key_pressed(VK_0) || Self::check_key_pressed(VK_NUMPAD0) {
             self.flags ^= FreecamFlags::LOCK_CAMERA_MOVEMENT;
             match self.flags.contains(FreecamFlags::LOCK_CAMERA_MOVEMENT) {
                 true => logln!(Verbose, "Camera is locked"),
@@ -379,21 +378,17 @@ impl Freecam {
 
     pub fn update_camera_path(&mut self, delta: f32) {
         // set camera path
-        if unsafe { GetAsyncKeyState(VK_1.0 as i32) & 1 != 0
-            || GetAsyncKeyState(VK_NUMPAD1.0 as i32) & 1 != 0 } {
+        if Self::check_key_pressed(VK_1) || Self::check_key_pressed(VK_NUMPAD1) {
             self.add_camera_node();
         }
         // update path speed
-        if unsafe { GetAsyncKeyState(VK_8.0 as i32) & 1 != 0
-            || GetAsyncKeyState(VK_NUMPAD8.0 as i32) & 1 != 0 }
-        {
+        if Self::check_key_pressed(VK_8) || Self::check_key_pressed(VK_NUMPAD8) {
             self.change_node_path_time(true);
-        } else if unsafe { GetAsyncKeyState(VK_9.0 as i32) & 1 != 0
-            || GetAsyncKeyState(VK_NUMPAD9.0 as i32) & 1 != 0 } {
+        } else if Self::check_key_pressed(VK_9) || Self::check_key_pressed(VK_NUMPAD9) {
             self.change_node_path_time(false);
         }
         // remove nodes
-        if unsafe { GetAsyncKeyState(VK_BACK.0 as i32) & 1 != 0 } {
+        if Self::check_key_pressed(VK_BACK) {
             if self.nodes.len() > 0 {
                 let old_id = self.nodes.len();
                 let rem = self.nodes.pop().unwrap();
@@ -402,7 +397,7 @@ impl Freecam {
                 logln!(Verbose, "Node list is already empty");
             }
         }
-        if unsafe { GetAsyncKeyState(VK_DELETE.0 as i32) & 1 != 0 } {
+        if Self::check_key_pressed(VK_DELETE) {
             if self.nodes.len() > 0 {
                 logln!(Verbose, "Cleared node list (had {} nodes)", self.nodes.len());
                 self.nodes.clear();
@@ -411,9 +406,7 @@ impl Freecam {
             }
         }
         // start playback
-        if (unsafe { GetAsyncKeyState(VK_2.0 as i32) & 1 != 0
-            || GetAsyncKeyState(VK_NUMPAD2.0 as i32) & 1 != 0
-        }) && self.nodes.len() > 0 {
+        if (Self::check_key_pressed(VK_2) || Self::check_key_pressed(VK_NUMPAD2)) && self.nodes.len() > 0 {
             let first = &self.nodes[0];
             logln!(Verbose, "Start playing ({} sec)", self.node_path_time);
             self.node_path_current = 0.;
@@ -439,6 +432,13 @@ impl Freecam {
             None => false
         }
     }
+    pub fn check_key_pressed(vk: VIRTUAL_KEY) -> bool {
+        let platform = unsafe { crate::globals::get_platform_global().unwrap() };
+        match unsafe { GetFocus() } == platform.get_hwnd() {
+            true => unsafe { GetAsyncKeyState(vk.0 as i32) & 1 != 0 },
+            false => false
+        }
+    }
 }
 
 impl UpdateTask for Freecam {
@@ -447,7 +447,7 @@ impl UpdateTask for Freecam {
               -> TaskFunctionReturn where Self: Sized {
         let ctx = task.get_main_work_mut().unwrap();
         // enable/disable freecam
-        if unsafe { GetAsyncKeyState(VK_F4.0 as i32) & 1 != 0 } {
+        if Self::check_key_pressed(VK_F4) {
             match ctx.flags.contains(FreecamFlags::ACTIVE) {
                 true => ctx.disable_freecam_mode(),
                 false => ctx.enable_freecam_mode(),
@@ -464,13 +464,9 @@ impl UpdateTask for Freecam {
         if ctx.flags.contains(FreecamFlags::SET_INITIAL_STATE) {
             if let Some(task) = GfdTask::<GfdAllocator, FldCamera>::find_by_str_mut("field camera CTRL") {
                 let fldcam_ctx = task.get_main_work_mut().unwrap();
-                let target_node = fldcam_ctx.get_target_node();
-                /*
-                ctx.camera_pos = target_node.map_or(Vec3A::ZERO, |n| n.get_translate());
-                ctx.lookat_pos = ctx.camera_pos + fldcam_ctx.get_target_offset();
-                */
+                ctx.camera_pos = fldcam_ctx.get_eye_pos();
+                ctx.pan = fldcam_ctx.get_yaw() / (180. / std::f32::consts::PI);
                 ctx.pitch = fldcam_ctx.get_pitch();
-                ctx.pan = fldcam_ctx.get_yaw();
             }
             ctx.flags &= !FreecamFlags::SET_INITIAL_STATE;
         }
@@ -479,6 +475,7 @@ impl UpdateTask for Freecam {
                 let fldcam_ctx = task.get_main_work_mut().unwrap();
                 if let Some(fldcam) = fldcam_ctx.get_gfd_camera_mut() {
                     fldcam.set_view_transform(ctx.update_view_matrix());
+                    fldcam.set_roll(ctx.get_roll());
                 }
             }
         }
@@ -505,6 +502,11 @@ impl UpdateTask for Freecam {
         if !ctx.flags.contains(FreecamFlags::HOOKED_ROADMAP) {
             if crate::field::try_hook_roadmap() {
                 ctx.flags |= FreecamFlags::HOOKED_ROADMAP;
+            }
+        }
+        if !ctx.flags.contains(FreecamFlags::HOOKED_CASINO_COIN) {
+            if crate::field::try_hook_casino_coin() {
+                ctx.flags |= FreecamFlags::HOOKED_CASINO_COIN;
             }
         }
         TaskFunctionReturn::Continue

@@ -1,6 +1,6 @@
 #![allow(dead_code, improper_ctypes)]
 // This file was automatically generated from opengfd-globals.
-use opengfd :: { device :: hedge :: hid :: keyboard :: KeyboardManager , io :: controller :: ControllerPlatformManager , kernel :: global :: Global } ;
+use opengfd :: { device :: hedge :: hid :: keyboard :: KeyboardManager , io :: controller :: ControllerPlatformManager , kernel :: global :: Global , platform :: global :: PlatformGlobal , } ;
 #[link(name = "opengfd_globals", kind = "raw-dylib")]
 unsafe extern "C" {
    /// Set the pointer to the memory location containing the beginning of GFD_GLOBAL.
@@ -20,6 +20,27 @@ unsafe extern "C" {
    /// Change the value of `GFD_GLOBAL`. Ensure that you've freed the existing data if
     /// it was allocated!
     pub(crate) fn change_gfd_global(new: Global);
+}
+
+#[link(name = "opengfd_globals", kind = "raw-dylib")]
+unsafe extern "C" {
+   /// Set the pointer to the memory location containing the beginning of PLATFORM_GLOBAL.
+    /// This method must only be called once, otherwise it will panic.
+    pub(crate) fn set_platform_global(ptr: *mut PlatformGlobal);
+   /// Get a possible reference to PLATFORM_GLOBAL. This checks to see if `set_platform_global`
+    /// was called previously and if either you or the hooked process have allocated the instance of it.
+    pub(crate) fn get_platform_global() -> Option<& 'static PlatformGlobal>;
+   /// Like `get_platform_global_mut`, but a mutable reference is created instead.
+    pub(crate) fn get_platform_global_mut() -> Option<& 'static mut PlatformGlobal>;
+   /// An unchecked version of `get_platform_global`. This assumes that PLATFORM_GLOBAL
+    /// is set and it's initialized.
+    pub(crate) fn get_platform_global_unchecked() -> & 'static PlatformGlobal;
+   /// An unchecked version of `get_platform_global_mut`. This assumes that PLATFORM_GLOBAL
+    /// is set and it's initialized.
+    pub(crate) fn get_platform_global_unchecked_mut() -> & 'static mut PlatformGlobal;
+   /// Change the value of `PLATFORM_GLOBAL`. Ensure that you've freed the existing data if
+    /// it was allocated!
+    pub(crate) fn change_platform_global(new: PlatformGlobal);
 }
 
 #[link(name = "opengfd_globals", kind = "raw-dylib")]
