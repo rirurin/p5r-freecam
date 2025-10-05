@@ -2,16 +2,6 @@
   "ModId": "p5rpc.freecam","ModName": "P5R Freecam","ModAuthor": "Rirurin","ModVersion": "0.1.0","ModDescription": "Freecam mod for Persona 5 Royal","ModDll": "p5rpc.freecam.dll","ModIcon": "Icon.png","ModR2RManagedDll32": "x86/p5rpc.freecam.dll","ModR2RManagedDll64": "x64/p5rpc.freecam.dll","ModNativeDll32": "","ModNativeDll64": "","PluginData": {
     "GithubDependencies": {
       "IdToConfigMap": {
-        "Ryo.Reloaded": {
-          "Config": {
-            "UserName": "RyoTune","RepositoryName": "Ryo","UseReleaseTag": false,"AssetFileName": "Mod.zip"
-          },"ReleaseMetadataName": "Ryo.Reloaded.ReleaseMetadata.json"
-        },
-        "Reloaded.Memory.SigScan.ReloadedII": {
-          "Config": {
-            "UserName": "Reloaded-Project","RepositoryName": "Reloaded.Memory.SigScan","UseReleaseTag": false,"AssetFileName": "Mod.zip"
-          },"ReleaseMetadataName": "Reloaded.Memory.SigScan.ReloadedII.ReleaseMetadata.json"
-        },
         "p5rpc.modloader": {
           "Config": {
             "UserName": "Sewer56","RepositoryName": "p5rpc.modloader","UseReleaseTag": false,"AssetFileName": "Mod.zip"
@@ -26,10 +16,34 @@
           "Config": {
             "UserName": "RyoTune","RepositoryName": "SharedScans","UseReleaseTag": false,"AssetFileName": "Mod.zip"
           },"ReleaseMetadataName": "SharedScans.Reloaded.ReleaseMetadata.json"
+        },
+        "riri.modruntime": {
+          "Config": {
+            "UserName": "rirurin","RepositoryName": "riri-mod-tools","UseReleaseTag": false,"AssetFileName": "Mod.zip"
+          },"ReleaseMetadataName": "riri.modruntime.ReleaseMetadata.json"
+        },
+        "Ryo.Reloaded": {
+          "Config": {
+            "UserName": "RyoTune","RepositoryName": "Ryo","UseReleaseTag": false,"AssetFileName": "Mod.zip"
+          },"ReleaseMetadataName": "Ryo.Reloaded.ReleaseMetadata.json"
+        },
+        "p5rpc.opengfd": {
+          "Config": {
+            "UserName": "rirurin","RepositoryName": "opengfd","UseReleaseTag": false,"AssetFileName": "Mod.zip"
+          },"ReleaseMetadataName": "p5rpc.opengfd.ReleaseMetadata.json"
+        },
+        "Reloaded.Memory.SigScan.ReloadedII": {
+          "Config": {
+            "UserName": "Reloaded-Project","RepositoryName": "Reloaded.Memory.SigScan","UseReleaseTag": false,"AssetFileName": "Mod.zip"
+          },"ReleaseMetadataName": "Reloaded.Memory.SigScan.ReloadedII.ReleaseMetadata.json"
         }
       }
     },"GithubRelease": {
       "UserName": "Rirurin","RepositoryName": "p5r-freecam","UseReleaseTag": false,"AssetFileName": "Mod.zip"
+    },"NuGet": {
+      "DefaultRepositoryUrls": [
+        "https://packages.sewer56.moe/v3/index.json"
+      ],"AllowUpdateFromAnyRepository": false
     }
   },"IsLibrary": false,"ReleaseMetadataFileName": "p5rpc.freecam.ReleaseMetadata.json","IsUniversalMod": false,"ModDependencies": [
     "p5rpc.modloader",

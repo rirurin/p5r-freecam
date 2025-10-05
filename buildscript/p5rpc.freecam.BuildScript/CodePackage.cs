@@ -6,9 +6,11 @@ public abstract class CodePackage
 {
     public string RootPath { get; private set; }
     public string Name { get; private set; }
+    protected ArgumentListBase ArgList { get; }
     public CodePackage(ArgumentListBase arg, string path)
     {
         RootPath = path;
+        ArgList = arg;
         Name = Path.GetFileName(RootPath);
     }
 
@@ -17,13 +19,25 @@ public abstract class CodePackage
 
 public class CSharpProject : CodePackage
 {
+    public string? PublishBuildDirectory { get; set; } = null;
+    public string? TempDirectory { get; set; } = null;
+    
     public CSharpProject(ArgumentListBase arg, string path) : base(arg, path) { }
     public override void Build()
     {
+        if (ArgList["Publish"].Enabled && (PublishBuildDirectory == null || TempDirectory == null))
+        {
+            Console.WriteLine($"{new ColorRGB(237, 66, 155)}FAILED{new ClearFormat()}");
+            throw new Exception($"Expected PublishBuildDirectory and TempDirectory to be set for {Name}");
+        }
         using (var crateBuild = new Process())
         {
             crateBuild.StartInfo.FileName = "dotnet";
-            crateBuild.StartInfo.Arguments = $"build \"{Name}.csproj\" -v q -c Debug";
+            crateBuild.StartInfo.Arguments = ArgList["Publish"].Enabled switch
+            {
+                true => $"publish \"{Name}.csproj\" -c Release --self-contained false -o \"{PublishBuildDirectory}\" /p:OutputPath=\"{TempDirectory}\"",
+                false => $"build \"{Name}.csproj\" -v q -c Debug",
+            };
             crateBuild.StartInfo.WorkingDirectory = RootPath;
             crateBuild.Start();
             crateBuild.WaitForExit();

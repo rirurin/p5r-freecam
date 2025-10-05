@@ -35,10 +35,12 @@ lto = "thin"
 incremental = true
 codegen-units = 64
 
-[patch."https://github.com/rirurin/opengfd"]
-opengfd = { path = "../opengfd/opengfd" }
+# For Rirurin: Uncomment the patches when in active development!
 
-[patch."https://github.com/rirurin/riri-mod-tools"]
-riri-mod-tools-proc = { path = "../riri-mod-tools/riri-mod-tools-proc" }
-riri-mod-tools-rt = { path = "../riri-mod-tools/riri-mod-tools-rt" }
-riri-mod-tools = { path = "../riri-mod-tools/riri-mod-tools" }
+# [patch."https://github.com/rirurin/opengfd"]
+# opengfd = { path = "../opengfd/opengfd" }
+
+# [patch."https://github.com/rirurin/riri-mod-tools"]
+# riri-mod-tools-proc = { path = "../riri-mod-tools/riri-mod-tools-proc" }
+# riri-mod-tools-rt = { path = "../riri-mod-tools/riri-mod-tools-rt" }
+# riri-mod-tools = { path = "../riri-mod-tools/riri-mod-tools" }

@@ -31,4 +31,21 @@ public static class Utils
             }
         }
     }
+    
+    public static byte[] DownloadFile(string Url)
+    {
+        var DownloadTools = Task.Run(async () =>
+        {
+            using (var client = new HttpClient())
+            {
+                using (var response = await client.GetAsync(Url))
+                {
+                    response.EnsureSuccessStatusCode();
+                    return await response.Content.ReadAsByteArrayAsync();
+                }
+            }
+        });
+        DownloadTools.Wait();
+        return DownloadTools.Result;
+    }
 }

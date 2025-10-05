@@ -33,6 +33,9 @@ ItemId = 559400
 UserName = "Rirurin"
 RepositoryName = "p5r-freecam"
 
+[UpdateSourceData.Nuget]
+RepositoryUrls = [ "https://packages.sewer56.moe/v3/index.json" ]
+
 [[R2Dependencies]]
 Id = "p5rpc.modloader"
 [R2Dependencies.UpdateSourceData]
@@ -75,9 +78,17 @@ RepositoryName = "Ryo"
 
 [[R2Dependencies]]
 Id = "p5rpc.opengfd"
+[R2Dependencies.UpdateSourceData]
+[R2Dependencies.UpdateSourceData.Github]
+UserName = "rirurin"
+RepositoryName = "opengfd"
 
 [[R2Dependencies]]
 Id = "riri.modruntime"
+[R2Dependencies.UpdateSourceData]
+[R2Dependencies.UpdateSourceData.Github]
+UserName = "rirurin"
+RepositoryName = "riri-mod-tools"
 
 [HookSettings]
 HookLibrary = "Reloaded2CSharpHooks"

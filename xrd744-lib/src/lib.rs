@@ -9,7 +9,8 @@ pub mod cmp {
 
 }
 pub mod evt {
-
+    pub mod function_table;
+    pub mod task;
 }
 pub mod fcl {
 

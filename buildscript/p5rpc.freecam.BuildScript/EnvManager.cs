@@ -5,12 +5,22 @@ namespace p5rpc.freecam.BuildScript;
 
 public class EnvManager
 {
-    public static string ENV_LOCAL_PATH = "env.local.yaml";
-
-    public Dictionary<string, string> EnvValues { get; private set; }
-
-    public EnvManager(string root)
+    public string ENV_LOCAL_PATH
     {
+        get => IsPublished switch
+        {
+            true => "env.yaml",
+            false => "env.local.yaml"
+        };
+    }
+
+    public Dictionary<string, string> EnvValues { get; }
+
+    private bool IsPublished;
+
+    public EnvManager(string root, bool isPublished)
+    {
+        IsPublished = isPublished;
         var envPath = Path.Combine(root, ENV_LOCAL_PATH);
         if (!File.Exists(envPath))
             throw new Exception($"File {ENV_LOCAL_PATH} is missing! Please create this, then replace the file paths to point to repositories on your machine!");
@@ -53,7 +63,7 @@ public class EnvManager
             {
                 return Value;
             }
-            else throw new Exception($"Value {k} does not exist in the ENV list");
+            throw new Exception($"Value {k} does not exist in the ENV list");
         }
         set => EnvValues.Add(k, value);
     }

@@ -13,20 +13,22 @@ public abstract class ExecutorBase<TArgumentList, TProjectManager>
     public string RootPath { get; private set; }
     public Stopwatch Watch { get; private set; }
     public abstract string BuildType { get; }
+    public PublishState PublishState { get; }
     public ExecutorBase(string[] args)
     {
         RootPath = args[0];
         var pargs = args[1..];
-        EnvManager = new(RootPath);
         ConstructorInfo ArgListCtor = typeof(TArgumentList).GetConstructor(
             BindingFlags.Instance | BindingFlags.Public, null, CallingConventions.HasThis, 
             [typeof(string[])], null)!;
         ArgList = (TArgumentList)ArgListCtor.Invoke([pargs]);
+        EnvManager = new(RootPath, ArgList["Publish"].Enabled);
         ConstructorInfo ProjectCtor = typeof(TProjectManager).GetConstructor(
             BindingFlags.Instance | BindingFlags.Public, null, CallingConventions.HasThis,
             [typeof(TArgumentList), typeof(string)], null)!;
         ProjectManager = (TProjectManager)ProjectCtor.Invoke([ArgList, RootPath]);
         Watch = new Stopwatch();
+        PublishState = new(RootPath, ArgList["Publish"].Enabled);
     }
     public void PrintInformation()
     {

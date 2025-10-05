@@ -22,8 +22,11 @@
 /buildscript/*/obj
 
 # Jetbrains IDE
-.idea/
+**/.idea/
 
 # See sample script in SetEnv.ps1
 /SetEnv.local.ps1
 /env.local.yaml
+
+# Reloaded-II publish script
+/Publish/*

@@ -13,8 +13,7 @@ edition.workspace = true
 allocator-api2 = "0.2.21"
 bitflags = "2.9.1"
 glam = "0.30.5"
-# opengfd = { git = "https://github.com/rirurin/opengfd", default-features = false, features = [ "v1-core", "image_loader", "serialize" ] }
-opengfd = { path = "../../opengfd/opengfd", default-features = false, features = [ "v1-core", "image_loader", "serialize" ] }
+opengfd = { git = "https://github.com/rirurin/opengfd", default-features = false, features = [ "v1-core", "image_loader", "serialize" ] }
 riri-mod-tools = { git = "https://github.com/rirurin/riri-mod-tools" }
 riri-mod-tools-proc = { git = "https://github.com/rirurin/riri-mod-tools" }
 riri-mod-tools-rt = { git = "https://github.com/rirurin/riri-mod-tools" }
