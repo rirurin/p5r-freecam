@@ -38,18 +38,14 @@ pub unsafe extern "C" fn set_event_command_name(ofs: usize) -> Option<NonNull<u8
                         logln!(Verbose, "Created hook for event command CAMERA SET DIRECT: 0x{:x}", ptr);
                         create_hook!(ptr, camera_set_direct_func_1_0);
                     },
-                    /*
                     "CShk" => {
                         logln!(Verbose, "Created hook for event command CAMERA SHAKE: 0x{:x}", ptr);
                         create_hook!(ptr, camera_shake_func_1_0);
                     },
-                    */
-                    /*
                     "CSF_" => {
                         logln!(Verbose, "Created hook for event command CAMERA SET FIELD: 0x{:x}", ptr);
                         create_hook!(ptr, camera_set_field_func_1_0);
                     },
-                    */
                     _ => ()
                 }
             },
@@ -162,38 +158,40 @@ pub unsafe extern "C" fn set_evt_state_loop(ofs: usize) -> Option<NonNull<u8>> {
     calling_convention = "microsoft",
 ))]
 #[allow(non_snake_case)]
-pub unsafe extern "C" fn EvtStateLoop(p_work: *mut u8, delta: f32) -> u64 {
-    let work = &mut *(p_work as *mut EvtTask);
-    if let Some(ec) = work.get_ctrl_mut() {
-        if let Some(cam) = ec.get_camera_mut() {
-            if let Some(free) = GfdTask::<GfdAllocator, Freecam>::find_by_str_mut(Freecam::NAME) {
-                let ctx = free.get_main_work_mut().unwrap();
-                if ctx.flags.contains(FreecamFlags::ACTIVE) {
-                    if !ctx.flags.contains(FreecamFlags::EVT_SET_INITIAL_PARAMS) {
-                        let inv = cam.get_view_transform().inverse();
-                        (ctx.pan, ctx.pitch, ctx.roll) = inv.to_euler(EulerRot::YXZEx);
-                        ctx.pan = if ctx.pan >= 0. { -(std::f32::consts::PI - ctx.pan) }
-                        else { ctx.pan + std::f32::consts::PI };
-                        let ret_rot = Quat::from_euler(EulerRot::YXZEx, ctx.pan, ctx.pitch, ctx.roll);
-                        ctx.camera_pos = Vec3A::from_vec4(inv.mul_vec4(Vec4::new(0., 0., 0., 1.)));
-                        ctx.evt_return = FreecamNode::new(ctx.camera_pos, ret_rot);
-                        ctx.flags |= FreecamFlags::EVT_SET_INITIAL_PARAMS;
-                    }
-                    if ctx.flags.contains(FreecamFlags::PLAYING_PATH) {
-                        ctx.set_position_from_last_interp(cam);
-                    }
-                    cam.set_view_transform(ctx.update_view_matrix());
-                    cam.set_roll(ctx.get_roll());
-                } else {
-                    if ctx.flags.contains(FreecamFlags::EVT_SET_INITIAL_PARAMS) {
-                        (ctx.pan, ctx.pitch, ctx.roll) = ctx.evt_return.rot.to_euler(EulerRot::YXZEx);
-                        ctx.camera_pos = ctx.evt_return.trans;
+pub unsafe extern "C" fn EvtStateLoop(p_task: *mut u8, delta: f32) -> u64 {
+    let task = &mut *(p_task as *mut GfdTask<GfdAllocator, EvtTask>);
+    if let Some(work) = task.get_main_work_mut() {
+        if let Some(ec) = work.get_ctrl_mut() {
+            if let Some(cam) = ec.get_camera_mut() {
+                if let Some(free) = GfdTask::<GfdAllocator, Freecam>::find_by_str_mut(Freecam::NAME) {
+                    let ctx = free.get_main_work_mut().unwrap();
+                    if ctx.flags.contains(FreecamFlags::ACTIVE) {
+                        if !ctx.flags.contains(FreecamFlags::EVT_SET_INITIAL_PARAMS) {
+                            let inv = cam.get_view_transform().inverse();
+                            (ctx.pan, ctx.pitch, ctx.roll) = inv.to_euler(EulerRot::YXZEx);
+                            ctx.pan = if ctx.pan >= 0. { -(std::f32::consts::PI - ctx.pan) }
+                            else { ctx.pan + std::f32::consts::PI };
+                            let ret_rot = Quat::from_euler(EulerRot::YXZEx, ctx.pan, ctx.pitch, ctx.roll);
+                            ctx.camera_pos = Vec3A::from_vec4(inv.mul_vec4(Vec4::new(0., 0., 0., 1.)));
+                            ctx.evt_return = FreecamNode::new(ctx.camera_pos, ret_rot);
+                            ctx.flags |= FreecamFlags::EVT_SET_INITIAL_PARAMS;
+                        }
+                        if ctx.flags.contains(FreecamFlags::PLAYING_PATH) {
+                            ctx.set_position_from_last_interp(cam);
+                        }
                         cam.set_view_transform(ctx.update_view_matrix());
-                        ctx.flags &= !FreecamFlags::EVT_SET_INITIAL_PARAMS;
+                        cam.set_roll(ctx.get_roll());
+                    } else {
+                        if ctx.flags.contains(FreecamFlags::EVT_SET_INITIAL_PARAMS) {
+                            (ctx.pan, ctx.pitch, ctx.roll) = ctx.evt_return.rot.to_euler(EulerRot::YXZEx);
+                            ctx.camera_pos = ctx.evt_return.trans;
+                            cam.set_view_transform(ctx.update_view_matrix());
+                            ctx.flags &= !FreecamFlags::EVT_SET_INITIAL_PARAMS;
+                        }
                     }
                 }
             }
         }
     }
-    original_function!(p_work, delta)
+    original_function!(p_task, delta)
 }
