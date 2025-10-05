@@ -187,7 +187,7 @@ public abstract class PublishCommon
         {
             toolPublish.StartInfo.FileName = State.ReloadedPublisherTool;
             toolPublish.StartInfo.Arguments += $"--modfolder \"{State.PublishBuildDirectory}\" ";
-            toolPublish.StartInfo.Arguments += "--packagename \"riri.criadx\" ";
+            toolPublish.StartInfo.Arguments += "--packagename \"p5rpc.freecam\" ";
             toolPublish.StartInfo.Arguments += $"--changelogpath \"{State.ChangelogPath}\" ";
             toolPublish.StartInfo.Arguments += $"--outputfolder \"{GetDirectory()}\" ";
             toolPublish.StartInfo.Arguments += $"--publishtarget {GetPublishTarget()}";
