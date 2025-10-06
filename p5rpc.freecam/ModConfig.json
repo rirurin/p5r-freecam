@@ -1,7 +1,12 @@
 {
-  "ModId": "p5rpc.freecam","ModName": "P5R Freecam","ModAuthor": "Rirurin","ModVersion": "0.1.0","ModDescription": "Freecam mod for Persona 5 Royal","ModDll": "p5rpc.freecam.dll","ModIcon": "Icon.png","ModR2RManagedDll32": "x86/p5rpc.freecam.dll","ModR2RManagedDll64": "x64/p5rpc.freecam.dll","ModNativeDll32": "","ModNativeDll64": "","PluginData": {
+  "ModId": "p5rpc.freecam","ModName": "P5R Freecam","ModAuthor": "Rirurin","ModVersion": "0.2.0","ModDescription": "Freecam mod for Persona 5 Royal","ModDll": "p5rpc.freecam.dll","ModIcon": "Icon.png","ModR2RManagedDll32": "x86/p5rpc.freecam.dll","ModR2RManagedDll64": "x64/p5rpc.freecam.dll","ModNativeDll32": "","ModNativeDll64": "","PluginData": {
     "GithubDependencies": {
       "IdToConfigMap": {
+        "Ryo.Reloaded": {
+          "Config": {
+            "UserName": "RyoTune","RepositoryName": "Ryo","UseReleaseTag": false,"AssetFileName": "Mod.zip"
+          },"ReleaseMetadataName": "Ryo.Reloaded.ReleaseMetadata.json"
+        },
         "riri.modruntime": {
           "Config": {
             "UserName": "rirurin","RepositoryName": "riri-mod-tools","UseReleaseTag": false,"AssetFileName": "Mod.zip"
@@ -12,6 +17,11 @@
             "UserName": "Sewer56","RepositoryName": "Reloaded.SharedLib.Hooks.ReloadedII","UseReleaseTag": false,"AssetFileName": "reloaded.sharedlib.hooks.zip"
           },"ReleaseMetadataName": "reloaded.sharedlib.hooks.ReleaseMetadata.json"
         },
+        "p5rpc.modloader": {
+          "Config": {
+            "UserName": "Sewer56","RepositoryName": "p5rpc.modloader","UseReleaseTag": false,"AssetFileName": "Mod.zip"
+          },"ReleaseMetadataName": "p5rpc.modloader.ReleaseMetadata.json"
+        },
         "SharedScans.Reloaded": {
           "Config": {
             "UserName": "RyoTune","RepositoryName": "SharedScans","UseReleaseTag": false,"AssetFileName": "Mod.zip"
@@ -21,16 +31,6 @@
           "Config": {
             "UserName": "Reloaded-Project","RepositoryName": "Reloaded.Memory.SigScan","UseReleaseTag": false,"AssetFileName": "Mod.zip"
           },"ReleaseMetadataName": "Reloaded.Memory.SigScan.ReloadedII.ReleaseMetadata.json"
-        },
-        "p5rpc.modloader": {
-          "Config": {
-            "UserName": "Sewer56","RepositoryName": "p5rpc.modloader","UseReleaseTag": false,"AssetFileName": "Mod.zip"
-          },"ReleaseMetadataName": "p5rpc.modloader.ReleaseMetadata.json"
-        },
-        "Ryo.Reloaded": {
-          "Config": {
-            "UserName": "RyoTune","RepositoryName": "Ryo","UseReleaseTag": false,"AssetFileName": "Mod.zip"
-          },"ReleaseMetadataName": "Ryo.Reloaded.ReleaseMetadata.json"
         },
         "p5rpc.opengfd": {
           "Config": {

@@ -14,6 +14,7 @@ use std::{
     ops::BitOrAssign,
     ptr::NonNull
 };
+use crate::btl::frequency::Frequency;
 
 bitflags! {
     #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
@@ -250,7 +251,7 @@ where A: Allocator + Clone
     formation: SmartPointer<usize, A>,
     route: SmartPointer<usize, A>,
     camera_ctrl: SmartPointer<usize, A>,
-    frequency: SmartPointer<usize, A>,
+    frequency: SmartPointer<Frequency, A>,
     player_list: List<SmartPointer<usize, A>, A>,
     enemy_list: List<SmartPointer<usize, A>, A>,
     action_list: List<SmartPointer<usize, A>, A>,
@@ -425,4 +426,15 @@ where A: Allocator + Clone
     blast_end_type: u32,
     blast_end_effect: SmartPointer<usize, A>,
     _allocator: A
+}
+
+impl<A> Package<A>
+where A: Allocator + Clone
+{
+    pub fn get_frequency(&self) -> Option<&Frequency> {
+        self.frequency.get_data_checked()
+    }
+    pub fn get_frequency_mut(&mut self) -> Option<&mut Frequency> {
+        self.frequency.get_data_checked_mut()
+    }
 }

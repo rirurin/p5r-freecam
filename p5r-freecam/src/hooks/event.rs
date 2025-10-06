@@ -1,4 +1,5 @@
-use crate::camera::{Freecam, FreecamFlags, FreecamNode};
+use crate::state::camera::{Freecam, FreecamFlags};
+use crate::state::node::FreecamNode;
 use opengfd::kernel::{
     allocator::GfdAllocator,
     task::{ Task as GfdTask, UpdateTask }
@@ -186,7 +187,7 @@ fn evt_state_loop_inner(task: &mut GfdTask<GfdAllocator, EvtTask>) -> VoidRes {
                 ctx.set_position_from_last_interp(cam);
             }
             cam.set_view_transform(ctx.update_view_matrix());
-            cam.set_roll(ctx.get_roll());
+            cam.set_roll(ctx.roll);
         } else {
             if ctx.flags.contains(FreecamFlags::EVT_SET_INITIAL_PARAMS) {
                 (ctx.pan, ctx.pitch, ctx.roll) = ctx.evt_return.rot.to_euler(EulerRot::YXZEx);

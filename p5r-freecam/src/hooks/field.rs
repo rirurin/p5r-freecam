@@ -12,7 +12,7 @@ use opengfd::kernel::{
 use opengfd::kernel::task::TaskFunctionReturn;
 use riri_mod_tools_proc::{ create_hook, riri_hook_fn, riri_hook_static, riri_static };
 use riri_mod_tools_rt::{logln, sigscan_resolver};
-use crate::camera::{Freecam, FreecamFlags};
+use crate::state::camera::{Freecam, FreecamFlags};
 use xrd744_lib::fld::proc::ProcTable;
 
 #[no_mangle]
@@ -236,5 +236,25 @@ pub unsafe extern "C" fn fldPanelTipUpdate(p_this: *mut u8, delta: f32) -> u64 {
         original_function!(p_this, delta)
     } else {
         TaskFunctionReturn::Continue as u64
+    }
+}
+
+#[no_mangle]
+pub unsafe extern "C" fn setGfdCameraSetFovy(ofs: usize) -> Option<NonNull<u8>> {
+    let addr = match sigscan_resolver::get_indirect_address_short(ofs) {
+        Some(v) => v, None => return None
+    };
+    logln!(Information, "got gfdCameraSetFovy: 0x{:x}", addr.as_ptr() as usize);
+    Some(addr)
+}
+
+#[riri_hook_fn(dynamic_offset(
+    signature = "E8 ?? ?? ?? ?? 8B 03 A8 02 74 ?? F3 0F 10 4B ??",
+    resolve_type = setGfdCameraSetFovy,
+    calling_convention = "microsoft",
+))]
+pub unsafe extern "C" fn gfdCameraSetFovy(p_camera: *mut u8, delta: f32) {
+    if !Freecam::check_active() {
+        let _ = original_function!(p_camera, delta);
     }
 }

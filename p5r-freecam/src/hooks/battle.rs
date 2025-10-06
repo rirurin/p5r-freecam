@@ -1,11 +1,10 @@
-use crate::camera::{ Freecam, FreecamFlags };
+use crate::state::camera::{ Freecam, FreecamFlags };
 use opengfd::kernel::{
     allocator::GfdAllocator,
     task::{ Task as GfdTask, UpdateTask }
 };
 use riri_mod_tools_proc::{ create_hook, riri_hook_fn, riri_mods_loaded_fn };
-use riri_mod_tools_rt::{ logln, sigscan_resolver };
-use std::ptr::NonNull;
+use riri_mod_tools_rt::logln;
 use xrd744_lib::btl::camera::CameraController;
 
 #[riri_hook_fn(user_defined())]
@@ -17,7 +16,7 @@ pub unsafe extern "C" fn btl_camera_update(p_this: *mut u8, p_pkg: *mut u8, delt
                 let this = &mut *(p_this as *mut CameraController<GfdAllocator>);
                 if let Some(cam) = this.get_camera_mut().get_entity_mut() {
                     cam.set_view_transform(ctx.update_view_matrix());
-                    cam.set_roll(ctx.get_roll());
+                    cam.set_roll(ctx.roll);
                 }
             } else {
                 original_function!(p_this, p_pkg, delta)

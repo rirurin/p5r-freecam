@@ -3,6 +3,7 @@ pub mod app {
 }
 pub mod btl {
     pub mod camera;
+    pub mod frequency;
     pub mod package;
 }
 pub mod cmp {

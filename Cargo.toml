@@ -7,7 +7,7 @@ members = [
 resolver = "2"
 
 [workspace.package]
-version = "0.1.0"
+version = "0.2.0"
 authors = [ "Rirurin" ]
 categories = [ "games" ]
 homepage = "https://riri.wtf"
@@ -40,7 +40,20 @@ codegen-units = 64
 # [patch."https://github.com/rirurin/opengfd"]
 # opengfd = { path = "../opengfd/opengfd" }
 
+# [patch."https://github.com/rirurin/riri-file-dialog"]
+# opengfd = { path = "../../riri-file-dialog/riri-file-dialog" }
+
 # [patch."https://github.com/rirurin/riri-mod-tools"]
 # riri-mod-tools-proc = { path = "../riri-mod-tools/riri-mod-tools-proc" }
 # riri-mod-tools-rt = { path = "../riri-mod-tools/riri-mod-tools-rt" }
 # riri-mod-tools = { path = "../riri-mod-tools/riri-mod-tools" }
+
+# [patch."https://github.com/rirurin/imgui-rs"]
+# imgui = { path = "../imgui-rs/imgui" }
+# imgui-sys = { path = "../imgui-rs/imgui-sys" }
+
+# [patch."https://github.com/rirurin/implot-rs"]
+# implot = { path = "../implot-rs" }
+
+# [patch."https://github.com/rirurin/riri-imgui-components"]
+# riri-inspector-components = { path = "../riri-imgui-components/riri-inspector-components" }

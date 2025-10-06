@@ -240,4 +240,10 @@ where A: Allocator + Clone {
     pub fn get_eye_pos(&self) -> Vec3A {
         self.eye_pos
     }
+    pub fn get_fovy(&self) -> f32 {
+        self.fovy
+    }
+    pub fn set_fovy(&mut self, value: f32) {
+        self.fovy = value;
+    }
 }

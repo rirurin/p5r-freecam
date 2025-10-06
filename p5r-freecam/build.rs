@@ -1,6 +1,11 @@
 #![allow(unused_imports)]
 use csbindgen;
-use riri_mod_tools::{ config_codegen, mod_package, reloaded_codegen };
+use riri_mod_tools::{
+    config_codegen,
+    git_version,
+    mod_package,
+    reloaded_codegen
+};
 use toml;
 use walkdir::{ DirEntry, WalkDir };
 use quote::quote;
@@ -116,6 +121,8 @@ fn main() {
     // (metaphor.multiplayer.ReloadedFFI.Interfaces.Ryo)
     // ...
 
+    // Read git version and commit count
+    git_version::create_version_file(&base, r2_modconfig.get_mod_version());
     // Generate Config.cs
     config_codegen::generate(&base).unwrap();
     // Copy middata to C# project

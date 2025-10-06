@@ -117,6 +117,11 @@ public class Executor : ExecutorBase<ArgumentList, ProjectManager>
             Directory.CreateDirectory(PublishState.PublishBuildDirectory);
             ((RustCrate)ProjectManager["p5r-freecam"]).CopyOutputArtifacts(ArgList["Debug"].Enabled, 
                 RootPath, PublishState.PublishBuildDirectory);
+            var modFiles = Path.Combine(ProjectManager["p5r-freecam"].RootPath, "data", "modfiles");
+            if (Directory.Exists(modFiles))
+            {
+                Utils.CopyDirectory(modFiles, PublishState.PublishBuildDirectory, true);
+            }
         }
         ProjectManager["p5rpc.freecam"].Build();
         if (ArgList["Publish"].Enabled)
@@ -128,6 +133,11 @@ public class Executor : ExecutorBase<ArgumentList, ProjectManager>
             // Copy output files from target folder into Reloaded mod
             var reloadedDirectory = Path.Combine(Environment.GetEnvironmentVariable("RELOADEDIIMODS")!, "p5rpc.freecam");
             ((RustCrate)ProjectManager["p5r-freecam"]).CopyOutputArtifacts(ArgList["Debug"].Enabled, RootPath, reloadedDirectory);
+            var modFiles = Path.Combine(ProjectManager["p5r-freecam"].RootPath, "data", "modfiles");
+            if (Directory.Exists(modFiles))
+            {
+                Utils.CopyDirectory(modFiles, reloadedDirectory, true);
+            }
         }
         PrintCompleted();
     }
