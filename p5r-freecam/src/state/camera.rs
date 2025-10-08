@@ -66,8 +66,6 @@ pub struct Freecam {
 
     // GUI
     pub(crate) shortcuts: Vec<Shortcut<Self>>,
-    // cam node editing requests
-    pub(crate) preview_node: Option<NonZeroUsize>,
 }
 
 pub(crate) const FREQUENCY_SPEED_TICK: f32 = 0.1;
@@ -333,7 +331,6 @@ impl InitTask for Freecam {
             last_interp: FreecamNode::default(),
             return_node: FreecamNode::default(),
             shortcuts: vec![],
-            preview_node: None
         }
     }
 }

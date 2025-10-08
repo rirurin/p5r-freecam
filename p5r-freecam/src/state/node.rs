@@ -136,17 +136,9 @@ impl<'a> TableDraw<Freecam> for FreecamNodeEntry<'a> {
                 }
             },
             3 => {
-                let is_preview_button = ctx.preview_node.map_or(false, |f| f.get() - 1 == self.index);
-                if is_preview_button {
-                    if ui.button(format!("Exit Preview##ForFreecamNodeEntry{}", self.index)) {
-                        ctx.preview_node = None;
-                    }
-                } else {
-                    if ui.button(format!("Preview##ForFreecamNodeEntry{}", self.index)) {
-                        ctx.preview_node = Some(unsafe { NonZeroUsize::new_unchecked(self.index + 1) });
-                        ctx.node_path_current = (self.index as f32 / (ctx.nodes.len() - 1) as f32) * ctx.node_path_time;
-                        ctx.camera_path_tick(0.);
-                    }
+                if ui.button(format!("Go To##ForFreecamNodeEntry{}", self.index)) {
+                    ctx.node_path_current = (self.index as f32 / (ctx.nodes.len() - 1) as f32) * ctx.node_path_time;
+                    ctx.camera_path_tick(0.);
                 }
                 ui.same_line_with_spacing(0., 10.);
                 if ui.button(format!("Remove##ForFreecamNodeEntry{}", self.index)) {

@@ -2,20 +2,15 @@
   "ModId": "p5rpc.freecam","ModName": "P5R Freecam","ModAuthor": "Rirurin","ModVersion": "0.2.0","ModDescription": "Freecam mod for Persona 5 Royal","ModDll": "p5rpc.freecam.dll","ModIcon": "Icon.png","ModR2RManagedDll32": "x86/p5rpc.freecam.dll","ModR2RManagedDll64": "x64/p5rpc.freecam.dll","ModNativeDll32": "","ModNativeDll64": "","PluginData": {
     "GithubDependencies": {
       "IdToConfigMap": {
-        "Ryo.Reloaded": {
+        "p5rpc.opengfd": {
           "Config": {
-            "UserName": "RyoTune","RepositoryName": "Ryo","UseReleaseTag": false,"AssetFileName": "Mod.zip"
-          },"ReleaseMetadataName": "Ryo.Reloaded.ReleaseMetadata.json"
+            "UserName": "rirurin","RepositoryName": "opengfd","UseReleaseTag": false,"AssetFileName": "Mod.zip"
+          },"ReleaseMetadataName": "p5rpc.opengfd.ReleaseMetadata.json"
         },
         "riri.modruntime": {
           "Config": {
             "UserName": "rirurin","RepositoryName": "riri-mod-tools","UseReleaseTag": false,"AssetFileName": "Mod.zip"
           },"ReleaseMetadataName": "riri.modruntime.ReleaseMetadata.json"
-        },
-        "reloaded.sharedlib.hooks": {
-          "Config": {
-            "UserName": "Sewer56","RepositoryName": "Reloaded.SharedLib.Hooks.ReloadedII","UseReleaseTag": false,"AssetFileName": "reloaded.sharedlib.hooks.zip"
-          },"ReleaseMetadataName": "reloaded.sharedlib.hooks.ReleaseMetadata.json"
         },
         "p5rpc.modloader": {
           "Config": {
@@ -32,10 +27,15 @@
             "UserName": "Reloaded-Project","RepositoryName": "Reloaded.Memory.SigScan","UseReleaseTag": false,"AssetFileName": "Mod.zip"
           },"ReleaseMetadataName": "Reloaded.Memory.SigScan.ReloadedII.ReleaseMetadata.json"
         },
-        "p5rpc.opengfd": {
+        "Ryo.Reloaded": {
           "Config": {
-            "UserName": "rirurin","RepositoryName": "opengfd","UseReleaseTag": false,"AssetFileName": "Mod.zip"
-          },"ReleaseMetadataName": "p5rpc.opengfd.ReleaseMetadata.json"
+            "UserName": "RyoTune","RepositoryName": "Ryo","UseReleaseTag": false,"AssetFileName": "Mod.zip"
+          },"ReleaseMetadataName": "Ryo.Reloaded.ReleaseMetadata.json"
+        },
+        "reloaded.sharedlib.hooks": {
+          "Config": {
+            "UserName": "Sewer56","RepositoryName": "Reloaded.SharedLib.Hooks.ReloadedII","UseReleaseTag": false,"AssetFileName": "reloaded.sharedlib.hooks.zip"
+          },"ReleaseMetadataName": "reloaded.sharedlib.hooks.ReleaseMetadata.json"
         }
       }
     },"GithubRelease": {

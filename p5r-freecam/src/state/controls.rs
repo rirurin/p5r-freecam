@@ -58,7 +58,14 @@ impl Freecam {
         if ui.input_float("Time##ForFreecamWindow", &mut self.node_path_time).step(1.).build() {}
         */
 
-        ui.text(format!("{:.02} / {:.02} sec", self.node_path_current, self.node_path_time));
+        // ui.text(format!("{:.02} / {:.02} sec", self.node_path_current, self.node_path_time));
+        ui.text(format!("{:.02} / ", self.node_path_current));
+        ui.same_line_with_spacing(0., 10.);
+        ui.set_next_item_width(50.);
+        if ui.input_float("##NodePathTimeForFreecamWindow", &mut self.node_path_time).display_format("%.2f").build() {
+        }
+        ui.same_line_with_spacing(0., 10.);
+        ui.text("sec");
         ui.disabled(self.nodes.is_empty(), || {
             ui.same_line_with_spacing(0., 10.);
             ui.set_next_item_width(ui.content_region_avail()[0] - (unsafe { ui.style().window_padding[0] - 10.}));
