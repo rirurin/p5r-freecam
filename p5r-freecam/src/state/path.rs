@@ -125,13 +125,9 @@ impl Freecam {
                 Some(FreecamNode::new(nodes[s].trans, nodes[s].rot))
             },
         } {
-            if let Some(task) = GfdTask::<GfdAllocator, FldCamera>::find_by_str_mut("field camera CTRL") {
-                let fldcam_ctx = task.get_main_work_mut().unwrap();
-                if let Some(fldcam) = fldcam_ctx.get_gfd_camera_mut() {
-                    self.set_position_from_interp(fldcam, payload);
-                }
+            if let Some(cam) = Self::get_scene_camera_mut() {
+                self.set_position_from_interp(cam, payload);
             }
-
         }
         if self.node_path_current >= self.node_path_time {
             self.flags &= !FreecamFlags::PLAYING_PATH;

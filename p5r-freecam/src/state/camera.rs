@@ -1,10 +1,11 @@
 use std::error::Error;
 use std::num::NonZeroUsize;
 use bitflags::bitflags;
-use glam::{Mat4, Vec3A};
+use glam::{EulerRot, Mat4, Quat, Vec3A, Vec4};
 use opengfd::io::controller::ControllerButton;
 use opengfd::kernel::allocator::GfdAllocator;
 use opengfd::kernel::graphics::GraphicsGlobal;
+use opengfd::object::camera::Camera as GfdCamera;
 use riri_mod_tools_rt::logln;
 use xrd744_lib::btl::package::Package;
 use crate::gui::utils::Shortcut;
@@ -12,6 +13,7 @@ use crate::state::node::FreecamNode;
 use opengfd::kernel::task::{InitTask, Task as GfdTask, TaskFunctionReturn, UpdateTask};
 use windows::Win32::UI::Input::KeyboardAndMouse::{VK_0, VK_ADD, VK_F4, VK_NUMPAD0, VK_OEM_MINUS, VK_OEM_PLUS, VK_SUBTRACT};
 use xrd744_lib::fld::camera::Camera as FldCamera;
+use glam::Vec4Swizzles;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
 pub enum CameraState {
@@ -60,7 +62,7 @@ pub struct Freecam {
     pub(crate) node_path_percent: f32,
     // send to evt task
     pub(crate) last_interp: FreecamNode,
-    pub(crate) evt_return: FreecamNode,
+    pub(crate) return_node: FreecamNode,
 
     // GUI
     pub(crate) shortcuts: Vec<Shortcut<Self>>,
@@ -204,6 +206,54 @@ impl Freecam {
     }
 }
 
+impl Freecam {
+    fn update_ui_element_visibility(&mut self) {
+        // hooked UI elements
+        if !self.flags.contains(FreecamFlags::HOOKED_PANEL_MAP) {
+            if crate::hooks::field::try_hook_panel_map() {
+                self.flags |= FreecamFlags::HOOKED_PANEL_MAP;
+            }
+        }
+        if !self.flags.contains(FreecamFlags::HOOKED_DATE_DRAW) {
+            if crate::hooks::field::try_hook_date_draw() {
+                self.flags |= FreecamFlags::HOOKED_DATE_DRAW;
+            }
+        }
+        if !self.flags.contains(FreecamFlags::HOOKED_MISSION_DRAW) {
+            if crate::hooks::field::try_hook_mission_draw() {
+                self.flags |= FreecamFlags::HOOKED_MISSION_DRAW;
+            }
+        }
+        if !self.flags.contains(FreecamFlags::HOOKED_BATTLE_PARTY_PANEL) {
+            if crate::hooks::field::try_hook_party_panel() {
+                self.flags |= FreecamFlags::HOOKED_BATTLE_PARTY_PANEL;
+            }
+        }
+        if !self.flags.contains(FreecamFlags::HOOKED_ROADMAP) {
+            if crate::hooks::field::try_hook_roadmap() {
+                self.flags |= FreecamFlags::HOOKED_ROADMAP;
+            }
+        }
+        if !self.flags.contains(FreecamFlags::HOOKED_CASINO_COIN) {
+            if crate::hooks::field::try_hook_casino_coin() {
+                self.flags |= FreecamFlags::HOOKED_CASINO_COIN;
+            }
+        }
+    }
+
+    pub(crate) fn get_scene_camera() -> Option<&'static GfdCamera> {
+        let graphics = GraphicsGlobal::get_gfd_graphics_global();
+        graphics.get_current_scene()
+                .and_then(|scn| scn.get_current_camera())
+    }
+
+    pub(crate) fn get_scene_camera_mut() -> Option<&'static mut GfdCamera> {
+        let graphics = GraphicsGlobal::get_gfd_graphics_global_mut();
+        graphics.get_current_scene_mut()
+            .and_then(|scn| scn.get_current_camera_mut())
+    }
+}
+
 impl UpdateTask for Freecam {
     const NAME: &'static str = "Rirurin Freecam";
     fn update(task: &mut GfdTask<GfdAllocator, Self>, delta: f32)
@@ -225,29 +275,23 @@ impl UpdateTask for Freecam {
         }
 
         if ctx.flags.contains(FreecamFlags::SET_INITIAL_STATE) {
-            if let Some(task) = GfdTask::<GfdAllocator, FldCamera>::find_by_str_mut("field camera CTRL") {
-                let fldcam_ctx = task.get_main_work_mut().unwrap();
-                ctx.camera_pos = fldcam_ctx.get_eye_pos();
-                ctx.pan = fldcam_ctx.get_yaw() / (180. / std::f32::consts::PI);
-                ctx.pitch = fldcam_ctx.get_pitch();
+            if let Some(cam) = Self::get_scene_camera() {
+                let inv = cam.get_view_transform().inverse();
+                (ctx.pan, ctx.pitch, ctx.roll) = inv.to_euler(EulerRot::YXZEx);
+                ctx.pan = match ctx.pan >= 0. {
+                    true => -(std::f32::consts::PI - ctx.pan),
+                    false => ctx.pan + std::f32::consts::PI
+                };
+                ctx.camera_pos = inv.w_axis.xyz().into();
+                let ret_rot = Quat::from_euler(EulerRot::YXZEx, ctx.pan, ctx.pitch, ctx.roll);
+                ctx.return_node = FreecamNode::new(ctx.camera_pos, ret_rot);
             }
             ctx.flags &= !FreecamFlags::SET_INITIAL_STATE;
         }
         if ctx.flags.contains(FreecamFlags::ACTIVE) {
-            if let Some(task) = GfdTask::<GfdAllocator, FldCamera>::find_by_str_mut("field camera CTRL") {
-                let fldcam_ctx = task.get_main_work_mut().unwrap();
-                if let Some(fldcam) = fldcam_ctx.get_gfd_camera_mut() {
-                    fldcam.set_view_transform(ctx.update_view_matrix());
-                    fldcam.set_roll(ctx.roll);
-                }
-            } else if let Some(_) = GfdTask::<GfdAllocator, ()>::find_by_str_mut("TITLE_DRAW") {
-                let glb = GraphicsGlobal::get_gfd_graphics_global_mut();
-                if let Some(scn) = glb.get_current_scene_mut() {
-                    if let Some(cam) = scn.get_current_camera_mut() {
-                        cam.set_view_transform(ctx.update_view_matrix());
-                        cam.set_roll(ctx.roll);
-                    }
-                }
+            if let Some(cam) = Self::get_scene_camera_mut() {
+                cam.set_view_transform(ctx.update_view_matrix());
+                cam.set_roll(ctx.roll);
             }
         }
         // open window
@@ -265,37 +309,7 @@ impl UpdateTask for Freecam {
                 Err(e) => logln!(Error, "An error occurred while executing the debugger GUI: {}", e),
             }
         }
-        // hooked UI elements
-        if !ctx.flags.contains(FreecamFlags::HOOKED_PANEL_MAP) {
-            if crate::hooks::field::try_hook_panel_map() {
-                ctx.flags |= FreecamFlags::HOOKED_PANEL_MAP;
-            }
-        }
-        if !ctx.flags.contains(FreecamFlags::HOOKED_DATE_DRAW) {
-            if crate::hooks::field::try_hook_date_draw() {
-                ctx.flags |= FreecamFlags::HOOKED_DATE_DRAW;
-            }
-        }
-        if !ctx.flags.contains(FreecamFlags::HOOKED_MISSION_DRAW) {
-            if crate::hooks::field::try_hook_mission_draw() {
-                ctx.flags |= FreecamFlags::HOOKED_MISSION_DRAW;
-            }
-        }
-        if !ctx.flags.contains(FreecamFlags::HOOKED_BATTLE_PARTY_PANEL) {
-            if crate::hooks::field::try_hook_party_panel() {
-                ctx.flags |= FreecamFlags::HOOKED_BATTLE_PARTY_PANEL;
-            }
-        }
-        if !ctx.flags.contains(FreecamFlags::HOOKED_ROADMAP) {
-            if crate::hooks::field::try_hook_roadmap() {
-                ctx.flags |= FreecamFlags::HOOKED_ROADMAP;
-            }
-        }
-        if !ctx.flags.contains(FreecamFlags::HOOKED_CASINO_COIN) {
-            if crate::hooks::field::try_hook_casino_coin() {
-                ctx.flags |= FreecamFlags::HOOKED_CASINO_COIN;
-            }
-        }
+        ctx.update_ui_element_visibility();
         TaskFunctionReturn::Continue
     }
     fn shutdown(_task: &mut GfdTask<GfdAllocator, Self>) -> ()
@@ -317,7 +331,7 @@ impl InitTask for Freecam {
             node_path_current: 0.,
             node_path_percent: 0.,
             last_interp: FreecamNode::default(),
-            evt_return: FreecamNode::default(),
+            return_node: FreecamNode::default(),
             shortcuts: vec![],
             preview_node: None
         }

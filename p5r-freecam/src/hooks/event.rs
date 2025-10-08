@@ -173,28 +173,8 @@ fn evt_state_loop_inner(task: &mut GfdTask<GfdAllocator, EvtTask>) -> VoidRes {
     if let Some(free) = GfdTask::<GfdAllocator, Freecam>::find_by_str_mut(Freecam::NAME) {
         let ctx = free.get_main_work_mut().unwrap();
         if ctx.flags.contains(FreecamFlags::ACTIVE) {
-            if !ctx.flags.contains(FreecamFlags::EVT_SET_INITIAL_PARAMS) {
-                let inv = cam.get_view_transform().inverse();
-                (ctx.pan, ctx.pitch, ctx.roll) = inv.to_euler(EulerRot::YXZEx);
-                ctx.pan = if ctx.pan >= 0. { -(std::f32::consts::PI - ctx.pan) }
-                else { ctx.pan + std::f32::consts::PI };
-                let ret_rot = Quat::from_euler(EulerRot::YXZEx, ctx.pan, ctx.pitch, ctx.roll);
-                ctx.camera_pos = Vec3A::from_vec4(inv.mul_vec4(Vec4::new(0., 0., 0., 1.)));
-                ctx.evt_return = FreecamNode::new(ctx.camera_pos, ret_rot);
-                ctx.flags |= FreecamFlags::EVT_SET_INITIAL_PARAMS;
-            }
-            if ctx.flags.contains(FreecamFlags::PLAYING_PATH) {
-                ctx.set_position_from_last_interp(cam);
-            }
             cam.set_view_transform(ctx.update_view_matrix());
             cam.set_roll(ctx.roll);
-        } else {
-            if ctx.flags.contains(FreecamFlags::EVT_SET_INITIAL_PARAMS) {
-                (ctx.pan, ctx.pitch, ctx.roll) = ctx.evt_return.rot.to_euler(EulerRot::YXZEx);
-                ctx.camera_pos = ctx.evt_return.trans;
-                cam.set_view_transform(ctx.update_view_matrix());
-                ctx.flags &= !FreecamFlags::EVT_SET_INITIAL_PARAMS;
-            }
         }
     }
     Ok(())
